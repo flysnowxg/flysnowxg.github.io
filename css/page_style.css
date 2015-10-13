@@ -1,0 +1,54 @@
+body {
+    font-family:"STKaiti", "华文楷体";
+    font-size:20px;
+    margin:5% 22%;
+    width:60%;
+    line-height:150%;
+    background-color:#fbfbfb;
+}
+
+body.common_page{
+    font-family:serif;
+    border:1px solid #aaaaa0;
+    background-color:#d8d8b4;
+}
+
+.main_page_title {
+    margin-top:120px;
+    margin-bottom:30px;
+    border-bottom:solid 2px LightGrey ;
+    width:90%;
+    line-height:150%;
+    color:DarkGreen;
+}
+
+.main_menu{
+
+}
+
+li {
+    margin-left:10px;
+	padding-bottom:5px;
+}
+
+pre {
+    font-family:"STKaiti", "华文楷体";
+	white-space:pre-wrap; /* css3.0 */
+	white-space:-moz-pre-wrap; /* Firefox */
+	white-space:-pre-wrap; /* Opera 4-6 */
+	white-space:-o-pre-wrap; /* Opera 7 */
+	word-wrap:break-word; /* Internet Explorer 5.5+ */
+}
+
+a {
+    padding:1px;
+	border-radius:3px;
+    border-bottom:none;
+    text-decoration:none;
+	outline-style:none;
+    color: black;
+}
+
+a:hover {
+	background-color:#888880;
+}

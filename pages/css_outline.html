@@ -1,0 +1,820 @@
+<!--author:xuegang email:308821698@qq.com-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>css概要</title>
+</head>
+<script>
+function enum_sections(root,prefix)
+{
+    var node_index=1;
+	var menu_html="";
+	var enum_sections_f=function(root){
+	    var items=root.childNodes;
+	    for(var index=0;index<items.length;index++)
+	    {
+            var item=items.item(index);
+            if(item.getAttribute==null) continue;
+            var attr=item.getAttribute("t");
+            if(attr!=null){
+                item.id="section"+prefix+node_index;
+                var title_content=prefix+node_index+". "+attr;
+                menu_html+="<a href='#"+ item.id+"'>"+title_content+"</a><br>"; 
+                item.innerHTML="<div class='title'>"+title_content+"</div>"+ item.innerHTML;
+                node_index++;
+             }
+             if(item.className=="sections"){
+                node_index--;
+                menu_html+="<div>"+enum_sections(item,prefix+node_index+".")+"</div>";
+                node_index++;
+             }
+             else {
+                enum_sections_f(item);
+             }
+	    }
+	}
+	enum_sections_f(root);
+	return menu_html;
+}
+function make_main_menu()
+{
+	if(navigator.userAgent.indexOf("MSIE")>0) {
+	   main_menu.innerHTML="对IE不是太兼容！";
+	   return;
+	}
+    var menu_html="<a href='#doc_content_title'>css简要</a><br>";
+    var enum_sectionses_f=function(root,prefix){
+        var items =root.childNodes;
+        for (var i = 0; i < items.length; i++) {
+            var item = items.item(i);
+            if (item.className != "sections") {
+                if(item.childNodes!=null){
+                    enum_sectionses_f(item,prefix);
+                }
+            }
+            else{
+	            menu_html += enum_sections(item,prefix);
+            }
+        }
+    }
+    enum_sectionses_f(document.body,"");
+	main_menu.innerHTML=menu_html;
+	
+	var menu_items=new Array();
+	var get_items_f=function(root){
+		var items = root.childNodes;
+	    for(var index=0;index<items.length;index++)
+	    {
+            var item=items.item(index);
+            if(item.href) 
+            {
+               menu_items.push(item);
+             }
+           else arguments.callee(item);
+         }
+	}
+	get_items_f(main_menu);
+	var loop_index=0;
+	setTimeout(function () {
+	    if(loop_index<menu_items.length)
+	    {
+            var item=menu_items[loop_index];
+            item.style.left="0px";
+            item.style.color="black";
+			item.style.transform="rotate(0deg)";
+			item.style.webkitTransform="rotate(0deg)";
+            loop_index++;
+            setTimeout(arguments.callee,70);
+        }
+	},100);
+}
+window.onload=make_main_menu;
+</script>
+<style>
+body{
+	font-family:"STKaiti" , "华文楷体";
+	font-size:18px;
+	line-height:120%;
+	margin-top:0px;
+    padding-top:0px;
+}
+em{
+	font-weight:bold;
+	color:red;
+}
+
+#main_menu{
+	position:fixed;
+	display:inline-block;
+	top:20px;
+	width:300px;
+}
+#main_menu div{
+    position:relative;
+    margin-left: 15px;
+}
+#main_menu a{
+	display:inline-block;
+	position:relative;
+    margin: 3px 0px 3px 15px;
+    border-radius:5px;
+	outline:none;
+    text-decoration: none;
+    line-height:120%;
+    color:transparent;
+    cursor:pointer;
+    left:300px;
+	transform: rotate(30deg);
+	-webkit-transform: rotate(30deg);
+    transition:left 1s,color 4s,transform 4s,transform 2s;
+    -webkit-transition:left 1s,color 4s,-webkit-transform 2s;
+}
+#main_menu a:hover{
+	background-color:#888880;
+}
+
+.doc_content{
+	display:inline-block;
+	margin:0px auto 400px 300px;
+	width:900px;
+	min-height:800px;
+}
+.doc_content > .title{
+	padding:40px 0px;
+	font-size:30px;
+	font-weight:bold;
+	color:DarkGreen;
+}
+.doc_content .sections{
+	display:inline-block;
+	margin-left:30px;
+	white-space:normal;
+	word-wrap:normal;
+}
+.doc_content .sections > div{
+	display:inline-block;
+	border-top:dotted 1px #eee;/**/
+	border-left:dotted 1px green;/**/
+	padding-left:43px;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+}
+.doc_content .sections > div > .title{
+	margin:10px 0px -5px -40px;
+	font-size:24px;
+}
+
+</style>
+<body>
+<div id="main_menu"></div>
+
+<div class="doc_content">
+<div id="doc_content_title" class="title">css概要</div>
+<div class="sections">
+<div t="值与单位">
+十进制正整数： positive_decimal:[0-9]+
+十进制整数： decimal:[+-]?[0-9]+
+十六进制整数： hex:[+-]?[0-9a-fA-F]+
+浮点数 ： float:decimal [\.] positive_decimal
+百分数 float [%]
+字符串 ：string:['] [^']* ['] | ["] [^"]* ["]
+无引号字符串：no_quote_string:
+标识符 ：label:[a-zA-Z][a-zA-Z0-9]*
+
+颜色 ：
+	颜色名　    ：标识符，例如red green等
+	#RRGGBB　#RGB    ：R G B是十六进制数
+	rgb(红,绿,蓝) rgba(红,绿,蓝,透明度)  ：红绿蓝可以是十进制数和百分数，透明度是取值0到1的浮点数
+	hsl(色调,饱和度,亮度) rgba(色调,饱和度,亮度,透明度)   ：前三个参数可以是百分数，透明度是取值0到1的浮点数
+ 
+url ：
+	url(路径) ：路径可以是字符串和无引号字符串
+
+长度 ：
+	基于物理的单位
+		pt（点）
+		mm（毫米） cm（厘米） cin（英寸） pc（派卡）
+	基于像素的单位
+		px （像素）
+		em（相对于font-size的倍数）
+		ex（相对于字符x内容区高度的倍数）
+媒体类型 ： 例如 print screen等等
+布局 ： fr（剩余空间分配数）
+布局 ： gr（网格数）
+角度 ： deg grad rad turn
+时间 ： ms s 
+频率 ： Hz kHz
+</div>
+<div t="选择器">
+<div class="sections">
+<div t="基本选择器">
+	通配符选择器 * ，例如 *{color:red;},这将使得所有元素为红色
+	元素选择器 label，例如 p{color:red;} ,这里p就是元素选择器
+	id选择器 #label，例如 #label{color:red;}
+	类选择器 .label，例如 .label{color:red;}
+	属性选择器
+		E[attr] 匹配具有attr属性值的E元素
+		E[attr="val"]  匹配具有attr属性且属性值等于单词'val'的E元素
+		E[attr^="val"] 匹配具有attr属性且属性值为以'val'字符串开头的E元素
+		E[attr$="val"] 匹配具有attr属性且属性值为以'val'字符串结束的E元素
+		E[attr~="val"] 匹配具有attr属性且属性值包含单词'val'的E元素
+		E[attr*="val"] 匹配具有attr属性且属性值包含字符串'val'的E元素
+		E[attr|="val"] 匹配具有attr属性且属性值为以val开头并用连接符
+				"-"分隔的字符串的E元素（也能匹配属性值等于val的元素）
+			
+	伪类选择器
+		E:link			设置超链接a在未被访问前的样式。 
+		E:visited 		设置超链接a在其链接地址已被访问过时的样式。 
+		E:hover			设置元素在其鼠标悬停时的样式。 
+		E:active			设置元素在被用户激活时的样式。 
+		E:focus			设置元素在成为输入焦点时的样式。 
+		E:checked		匹配用户界面上处于选中状态的元素E。
+							(用于input type为radio与checkbox时) 
+		E:enabled 		匹配用户界面上处于可用状态的元素E。 
+		E:disabled		匹配用户界面上处于禁用状态的元素E。 
+		E:root			匹配E元素在文档的根元素。 
+		E:lang() 		匹配使用特殊语言的E元素。 
+		E:empty 		匹配没有任何子元素（包括text节点）的元素E。 
+		E:not() 			匹配不含有s选择符的元素E。 
+		E:target 		匹配相关URL指向的E元素。 
+			
+		E:first-child				匹配父元素的第一个子元素E。 
+		E:last-child				匹配父元素的最后一个子元素E。 
+		E:only-child				匹配父元素仅有的一个子元素E。 
+		E:nth-child(n)			匹配父元素的第n个子元素E。 
+		E:nth-last-child(n)		匹配父元素的倒数第n个子元素E。 
+		E:first-of-type			匹配同类型中的第一个同级兄弟元素E。 
+		E:last-of-type			匹配同类型中的最后一个同级兄弟元素E。 
+		E:only-of-type			匹配同类型中的唯一的一个同级兄弟元素E。 
+		E:nth-of-type(n)		匹配同类型中的第n个同级兄弟元素E。 
+		E:nth-last-of-type(n)   匹配同类型中的倒数第n个同级兄弟元素E。 
+			
+		@page:first		设置页面容器第一页使用的样式。
+		@page:left		设置页面容器位于装订线左边的所有页面使用的样式。
+		@page:right		设置页面容器位于装订线右边的所有页面使用的样式。
+
+	伪元素选择器
+		
+	选择器分组 例如 h1,h2{color:red;},这将把h1，h2设置为红色
+	声明分组 例如 h1{color:red;ground-color:green;},在这里组合了两个属性声明
+	类分组，一个元素可以关联多个类，例如&lt;a class="class1 class2">&lt;/a> ,
+		这时选择器 .class1和.class2以及.class1.class2都会匹配这个元素
+</div>
+<div t="组合选择器">
+	结合选择器
+		[元素选择器 *]？ [id选择器 类选择器 属性选择器 伪类选择器]* [伪对象选择器]?
+		例如 p.class1#id1:visited:after 
+		注意，例如 p.class1 和p  .class1是不一样的
+	关系选择器
+		E F 选择所有被E元素包含的F元素。
+		E>F 选择所有作为E元素的子元素F。
+		E+F 选择E元素紧紧相邻的F元素，E元素和F元素有共同的父节点。
+		E~F 选择E元素之后的所有F元素，E元素和F元素有共同的父节点。
+</div>
+</div>
+</div>
+<div t="选择器的优先级">
+int g_dec_order=0;
+class css_style_important
+{
+    int _src_important;
+    int _id_important;
+    int _class_val_xclass_important;
+    int _type_xelement_important;
+    int _dec_order_important;
+   
+    css_style_important()
+    :_src_important(0),
+    _id_important(0),
+    _class_val_xclass_important(0),
+    _type_xelement_important(0),
+    _dec_order_important(0){}
+}
+class css_style
+{
+    int _src;
+    string _select;
+    string _prop_name;
+    string _prop_value;
+    css_style_important _important;
+}
+css_style_important::_src_important的规则
+    默认继承的值        （_src_important=-4）
+    浏览器默认设置    （_src_important=-3）
+    作者的非css样式，比如font等    （_src_important=-2）
+    读者的普通样式表    （_src_important=-1）
+    作者的普通样式表    （_src_important=0）
+    作者的内嵌样式表    （_src_important=1）
+    作者的important样式表    （_src_important=2）
+    读者的important样式表    （_src_important=3）
+   
+css_style_important::_id_important的规则：
+    每遇见一个id属性选择 _id_important+=1;
+   
+css_style_important::_class_val_xclass_important的规则：
+    每遇见一个类属性、属性选择、伪类选择 _class_val_xclass_important+=1;
+   
+css_style_important::_type_xelement_important的规则：
+    每遇见一个元素、伪元素选择 _type_xelement_important+=1;
+   
+css_style_important::_dec_order_important的规则：
+	权重相同的，后出现的规则覆盖前面的规则
+	每生成一个css_style对象 g_dec_order+=1;并让 _dec_order_important=g_dec_order;
+
+（注：结合符、通配符对特殊性没有贡献）
+
+显示继承与默认继承：
+	例如：p{color:inherit;}这就是显示继承父元素的属性，但是即使不为p
+	指定color属性，他也会从父元素继承元素，这个继承的值就是默认继承
+	显示继承，应当看作与其他方式指定样式是一样的。比如color:red;
+	和color:inherit应当看做对优先级影响是相同的。
+
+链接样式的例子：
+	链接的样式表顺序(lvha)
+	:link {color:black;}
+	:visited {color:red;}
+	:hover {color:green;}
+	:active {color:yellow;}
+	:visited:hover {color:gray;}
+	:visited:active {color:purple;}
+	一个链接不管有没有访问，都会是link状态，所以要排第一
+	一个访问过的链接是:visited状态，比link稍微特殊一点
+	鼠标悬停在链接上是hover状态
+	鼠标按下去的时候是active状态，但依然是hover状态
+</div>
+<div t="字体">
+class font_description
+{
+	string name;		//字体名
+	string family;		//字体系列
+	string style;		//字体风格
+	string weight;		//字体加粗
+	string stretch;		//字体拉伸
+	string variant;		//小型大写字母？？？
+	pair range;			//编码的字符范围
+	int base_size;		//这个貌似可有可无，因为现在多为矢量字体
+}
+
+font-family 字体系列名（字体系列名不能加引号） 或 字体名（用引号包含的名字
+			只作为字体名。如果字体名不与字体系列名冲突，可以不加引号）
+font-weight 字体加粗 关键字加粗 数字加粗 相对加粗
+font-style  字体偏斜 normal | italic | oblique
+font-stretch  字体拉伸（废弃）
+font-variant  small-caps（小写字母的用小的大写字母表示）
+font-size   字体大小 关键字绝对大小 数值大小 相对大小关键字 百分比
+font-size-adjust 改变字体的可辨识度（废弃）
+@font-face 规则，可以下载字体 ，定义字体属性
+
+根据前5个属性（font-family 到 font-variant）去选择一个适用的字体。
+如果没有对应的斜体也许显示的时候要进行倾斜处理
+如果不符合拉伸的属性，也许要进行拉伸处理
+如果没有小型大写字母，应当吧小写字符变成大写并改变字体大小
+
+根据font-size计算字体的大小，长度和高度
+根据font-size-adjust 再次调整字体大小
+
+</div>
+<div t="文本">
+class char_img_tl_element //一个字符或者一个图片或者一行文本等等
+{
+    int _width;
+    int _baseline;
+    int _line_height;	//对于字符就是行内框的高度（行内框由font-size(即em框)和line-height确定）。
+						//对于图片就是内容区内边距边框外边框之和
+    int _content_height;//对于字符就是字形的高度。对于图片本身的高度
+}
+
+class text_line
+{
+    int _min_width;
+    int _max_width;
+    int _width;        
+    int _baseline;
+    int _line_height;        //行框高度
+    int _content_height;    //内容区高度
+    vector _chars;
+}
+text-indent  文本缩进 应用于块级元素
+line-height  行高 （字符会有一个内容区，还会有一个行内框，行还会有一个行框。)
+white-space  空格、tab、换行符处理，自动换行规则
+word-wrap  自动换行规则，断词问题
+break-word  自动换行规则，断词问题
+letter-spacing  增加和缩减字母之间的间距
+word-spacing  增加和缩减单词之间的间距
+text-align  文本水平方向的对齐 ，应用于块级元素，对于会换行的元素，是先计算换行，然后计算对齐（不能用于行内元素）
+vertical-align  文本垂直方向的对齐
+text-decoration  上划线 下划线 删除线
+text-decoration	  复合属性。设置文本的装饰。 
+text-decoration-line  文本装饰线条的位置。 
+text-decoration-color  文本装饰线条的颜色。 
+text-decoration-style	  文本装饰线条的形状。 
+text-shadow  文本的文字是否有阴影及模糊效果 
+direction 改变行内文本的方向
+uinicode-bidi
+write-mode
+文本行的计算，总之，在计算了字体属性后，对每一个字符都会得到 char_img_tl_element 中的这几个属性（对于图片，text_line也能计算出这几个属性）
+1. 首先格式话字符串，得到一个vector chars;
+    1. 如果设置了text-indent ，则首先添加一个 char_img_tl_element::_width等于缩进值的 char_img_tl_element 的元素到chars；
+    2. 读取每一个字符或者图片或者表格，一定可以计算出 char_img_tl_element 中要求的那几个值。
+       对于没有_baseline的就让_baseline等于_content_height,将这些元素添加到chars中。
+       在这个计算过程中，会用到line-height属性。还会用到white-space属性
+2. 根据各种属性，一定可以计算出 text_line::_min_width text_line::_max_width ,text_line::_width也许能计算出来，也许不能
+3. 如果text_line::_width没计算出来，text_line::_width初始化为0,然后遍历chars
+    1. 对每一个char_img_tl_element，运用 width_increase =（char_element::_width - letter-spacing )
+    2. 如果当前char_img_tl_element是空格或者tab，运用 width_increase -= word-spacing ;
+    3. 如果text_line::_width + width_increase 小于等于 text_line::_max_width ，则 text_line::_width += width_increase;
+       并将这个char_element加入到 text_line::_chars中；否则跳出循环
+4. text-align的设置，调整text_line::_chars中每个元素的显示位置
+5. 根据vertical-align和text_line::_chars每个字符的 _line_height 信息和计算出行高 text_line::_line_height;
+6. 根据vertical-align和text_line::_chars每个字符的 _content_height 信息和计算出行高 text_line::_content_height;
+注：em框行框 与 内容区内边距边框外边框 是两套互不干扰的系统。
+
+</div>
+<div t="外边距，边框，内边距，外边框">
+外边距
+	外边距可以设置为auto
+	margin:top right bottom left
+	margin-top
+	margin-right
+	margin-bottom
+	margin-left
+	对于块级元素，垂直方向的外边距会合并。
+	对于行内替换元素和行内非替换元素在水平方向的外边距不会合并
+
+边框
+	边框在内边距之外，但背景会延伸到边框
+	border-style none风格的边框导致边框消失，边框宽度设置为0
+	border-top-style
+	border-right-style
+	border-bottom-style
+	border-left-style
+	border-width
+	border-top-width
+	border-right-width
+	border-bottom-width
+	border-left-width
+	border-color  边框颜色值transparent用于创建不可见的边框.但是元素的背景依然存在于边框区域
+	border-top-color
+	border-right-color
+	border-bottom-color
+	border-left-color
+	border
+	border-top
+	border-right
+	border-bottom
+	border-left
+	border-radius  设置边框圆角
+	border-top-left-radius  
+	border-top-right-radius
+	border-bottom-right-radius
+	border-bottom-left-radius  
+	border-image 图片边框
+	box-shadow 阴影
+	box-reflect 倒影
+
+补白
+	padding
+	padding-top
+	padding-right
+	padding-bottom  
+	padding-left
+	
+外边框
+	outline  外边框样式 
+	outline-width  外边框宽度 
+	outline-style  外边框样式 
+	outline-color 外边框的颜色 
+	outline-offset 外边框偏移位置 
+</div>
+<div t="前景与背景">
+color 前景色  
+opacity 透明度
+background  
+background-color 背景色
+background-image 背景图片
+background-size 设置对象的背景图像的尺寸大小 
+background-repeat 重复
+background-attachment 背景是否随内容滚动
+background-clip 设置背景向外裁剪的区域 
+background-origin :border-box | padding-box | content-box 定义定位时的起点
+background-position 定位,使用百分数方式时，百分数是左边的空白相对于于水平方向空白长度的比例，垂直方向与之相似
+
+父元素背景颜色：transparent
+</div>
+<div t="元素框">
+块级元素
+1. 宽度  
+   7个宽度之和为父元素的宽度，当width为auto时，
+     如果外边距固定，没什么好说的。
+     如果外边距存在auto，对于非替换元素，外边距会取值为0（width趋向于尽可能大）。
+       对于替换元素，会让width刚好包含替换元素（width趋向于尽可能小）
+2. 高度
+  当height为auto时，heigh趋向于刚好包含所有元素时的高度，
+  （在计算高度时，和计算宽度时似乎某些方面是相反的。如果父元素的高度时auto，那么父元素的高度由子元素来确定）
+  如果元素没有设置内边距和边框，那么height为最高元素的边框外上界到最低元素的边框外下界
+  如果元素有设置内边距或者边框，那么height为最高元素的外边界外上界到最低元素的外边界外下界
+3. 垂直方向的外边距合并
+  如果相邻两个元素的外边距都为正，则取这两个值中的最大值为两个元素边框之间的距离
+  如果相邻两个元素的外边距都为负，则取这两个值中的最小值为两个元素边框之间的距离
+  如果相邻两个元素的外边距一正一负，则将这两个值相加为两个元素边框之间的距离
+
+行级元素
+行与行之间的距离由行框的高度决定
+对于只包含行内元素的父元素的内容区高度。不管父元素有没有内边距边框外边框，父元素的内容区高度都是从最高行框的顶部到最低行框的底部
+但是行级元素的左右内边距边框外边框会影响元素的宽度
+对于行级元素内容区左右内边距边框外边框的计算:不论width为auto或不是，width会是刚好显示内容需要的宽度。对于指定为auto的外边界会被设定为0
+行级非替换元素
+  对于高度:没什么好说的。
+行级替换元素
+  对于高度:用图片做试验，发现图片外边距上下限会成为行框的上下限，
+  所以外边距上下限会赋值给 char_img_tl_element::_line_height
+  图片的高度会赋值给 char_img_tl_element::_content_height
+  图片的baseline为图像的外边距的底部
+  
+width 不能用于行内元素，
+height 不能用于行内元素，
+min-width
+max-width
+min-height
+max-height
+</div>
+<div t="布局">
+display：
+    none： 隐藏对象。与visibility属性的hidden值不同，其不为被隐藏的对象保留其物理空间
+    inline： 指定对象为内联元素。
+    block： 指定对象为块元素。
+    inline-block： 指定对象为内联块元素。
+    table： 指定对象作为块元素级的表格。
+    inline-table： 指定对象作为内联元素级的表格。
+    table-caption： 指定对象作为表格标题。
+    table-header-group： 指定对象作为表格标题组。
+    table-footer-group： 指定对象作为表格脚注组。
+    table-row-group： 指定对象作为表格行组。
+    table-column-group： 指定对象作为表格列组显示。
+    table-row： 指定对象作为表格行。
+    table-column： 指定对象作为表格列。
+    table-cell： 指定对象作为表格单元格。
+    list-item： 指定对象为列表项目。
+    run-in： 根据上下文决定对象是内联对象还是块级对象。（CSS3）
+    box： 将对象作为弹性伸缩盒显示。（伸缩盒最老版本）（CSS3）
+    inline-box： 将对象作为内联块级弹性伸缩盒显示。（伸缩盒最老版本）（CSS3）
+    flexbox： 将对象作为弹性伸缩盒显示。（伸缩盒过渡版本）（CSS3）
+    inline-flexbox： 将对象作为内联块级弹性伸缩盒显示。（伸缩盒过渡版本）（CSS3）
+    flex： 将对象作为弹性伸缩盒显示。（伸缩盒最新版本）（CSS3）
+    inline-flex： 将对象作为内联块级弹性伸缩盒显示。（伸缩盒最新版本）（CSS3）
+
+盒模型：
+    box-orient 子元素的排列方式。 
+    box-pack 子元素的对齐方式。请参阅box-align兄弟属性 
+    box-align 子元素的对齐方式。请参阅box-pack兄弟属性 
+    box-flex  子元素如何分配其剩余空间。 
+    box-flex-group 子元素的所属组。 
+    box-ordinal-group 子元素的显示顺序。 
+    box-direction 子元素的排列顺序是否反转。 
+    box-lines 子元素是否可以换行显示。 
+    flex  伸缩盒对象的子元素如何分配空间。 
+    flex-grow  扩展比率。 
+    flex-shrink  收缩比率 
+    flex-basis  伸缩基准值。 
+    flex-flow  子元素排列方式。 
+    flex-direction  子元素在父容器中的位置。 
+    flex-wrap  子元素超出父容器时是否换行。 
+    align-content  堆叠伸缩行的对齐方式。 
+    align-items  子元素在侧轴（纵轴）方向上的对齐方式。 
+    align-self  子元素自身在侧轴（纵轴）方向上的对齐方式。 
+    justify-content  子元素在主轴（横轴）方向上的对齐方式。 
+    order  子元素出現的順序。 
+
+</div>
+<div t="浮动与定位">
+float 浮动
+clear 清除  只用于块级元素，用于行级元素时失效
+浮动是一个用于行内布局调整的功能。浮动元素被强制定义为一个inline-block元素。
+1. 首先浮动元素会和其他行内元素一起被考虑计算来计算一行内有那些元素。
+  a. 如果计算到一行的最后还有空白位置但是下一个元素是浮动元素，但是又不能放下这个浮动元素；
+  这时会去遍历下一个元素能不能放下。如果这个元素不是浮动元素也放不下。遍历终止。否则将这个元素加入到当前行中。然后转到a
+2. 在一行计算完以后，再将元素调换顺序，左浮动调到一行的最前端，又浮动调到一行的尾端，但是左（右）浮动元素的之间的相对位置不能换
+3. 浮动元素会影响后续兄弟元素的布局，也会影响父元素的兄弟元素的布局。影响的原则就是，浮动元素占据了的位置默认不能被覆盖。
+    如果父元素不是浮动元素。父元素的后续兄弟节点会在浮动元素形成的一些小空间开始显示
+    如果父元素是浮动元素。父元素的后续兄弟节点会在完全新的行里面显示
+
+position 定位
+top
+bottom
+left
+right
+overflow
+clip  rect中的参数是相对于内容区左上角的
+visible  控制可见性，但是元素依然占据位置
+一般是在包含块的内容区范围内描述定位，也有以内边距范围描述定位的
+定位公式father-width = left + margin-left + border-left + padding-left + width + padding-right  + padding-right+ border-right + margin-right + right
+这里面 left margin-left width margin-right right 可以为auto
+如果都不为auto，会将right设置为auto
+1. 有一个为auto
+  a. 如果是width为auto，但是根据上述等式计算出width小于min-width或大于max-width，会将width矫正到这个范围中，然后将right设置为auto
+  b. 如果是其他值为auto，根据上述公式计算出auto即可
+2. 如果两个auto
+ a.  如果其中width为auto，会计算auto为包含元素的最佳尺寸，然后用上述九元素公式计算剩下那个值
+ b. 如果margin-left margin-right为auto，元素margin会计算为相等的值
+ c. 如果一个为margin，另一个为（left，right）之一，则margin那个计算为0，然后用上述公式计算剩下的那个值
+ d. 如果left right为auto，left会计算为静态位置
+。。。
+3. 也许最终计算过程是这样的：
+首先这些值有一个优先计算顺序。width  margin left right
+首先如果width为auto，看margin left right是否有auto值，如果没有，用上述1.a的方法计算。如果有，将width计算为刚好适合放下元素的宽度
+然后如果left为auto，看margin right是否为auto，如果没有，按照1.b计算，如果有，按照2.d计算
+然后如果margin为auto，看left right是否有auto值，如果没有，按照1.b 或 2.b 计算。如果有，将margin置为0.
+然后如果然后如果margin为auto，看right是否为auto值，如果不是，按照1.b 或 2.b 计算。如果是，将margin置为0.
+//然后如果left为auto，看right是否为auto，如果不是，按照1.b计算，如果是，按照2.d计算
+//left为auto，看right是否为auto，如果不是，按照1.b计算，如果是，按照2.d计算
+最后，如果right为auto，按照1.b计算
+
+z-index
+z-index指明了同一个父节点下的直接兄弟节点间的叠放次序。一个节点中的子节点和另一个节点中的子节点的叠放顺序并不相干。
+1. 当比较两个节点的叠放次序时，只需追溯到有共同父节点的兄弟节点间的z序就知道了
+2. 实际显示一个节点的子节点时应当是这样的。将所有直接子节点按照z序从低到高依次显示。显示子节点时递归这个过程。
+上面这种理解是错误的，应当是每声明一个z-index会形成一个叠放上下文
+1. 当比较两个节点的叠放次序时，只需追溯到有共同叠放上下文下的子叠放上下文的z-index就知道叠放顺序了
+2. 实际显示一个节点时应当是这样的。将所有直接子节点按照z序从低到高依次显示。显示子节点时递归这个过程。
+
+
+</div>
+<div t="表">
+表的样式是一层一层覆盖的 ，顺序是table colgroup col rowgroup row cell
+caption-side 控制caption出现的位置（上下左右）
+border-collapse 控制单元格是否合并边框
+   当其值为separate时，不仅每个单元格有边框，还可以通过border-spacing设置额外的间距
+   当其值为collapse时，border-spacing无效，单元格的边框还要合并（就像合并div元素的外边距一样）
+       此时，表内容区宽度这样计算 table_width = border-width0 * 0.5 + padding-left0 + width0 +
+       padding-right0 + border-width1 + ... +border-widthn *0.5
+border-spacing 设置单元格之间的空隙。代替table标签的cellspacing属性。这个属性生成的空表在table的内容区（因为table还可以有自己的补白，边框和外边距）
+empty-cells 是否显示空单元格
+
+</div>
+<div t="列表与内容生成">
+列表
+	list-style
+	list-style-type  列表标签的类型
+	list-style-position 显示在内边距中还是外边距中
+	list-style-image  显示的图像
+内容生成
+	content  内容生成
+	counter-reset  声明并重置一个计算器
+	counter-increment 增加一个计算器的值
+	用于内容生成的函数
+		counter  返回计算器的值
+		counters 组合计数器的值
+		attr  取一个标签的属性值
+	quotes
+</div>
+<div t="过渡和变换">
+过渡可以分为 简单的过渡 和 动画
+变换可以分为2d变换和3d变换。（一般就是位移，旋转，缩放，和扭曲，当然也可以弄出更复杂的效果）
+过渡：
+	transition	
+	transition-property 被过渡的属性 
+	transition-delay	过渡的开始时间 
+	transition-duration 过渡的持续时间 
+	transition-timing-function	过渡的渐变曲线 
+	例子：
+	.div_transition:hover{
+		color:white;
+		transition:color 3s;
+	}
+	&lt;div class="div_transition">过渡示例&lt;/div>
+
+动画：
+	animation 
+	animation-name		要使用的动画的名称 
+	animation-delay		动画的开始时间 
+	animation-duration	动画的持续时间 
+	animation-timing-function	动画的渐变曲线 
+	animation-iteration-count	动画的循环次数 
+	animation-direction		在循环中是否反向运动 
+	animation-play-state	设置对象动画的状态 
+	animation-fill-mode		设置对象动画时间之外的状态 
+
+	例子：
+	.div_animated:hover{
+		position:relative;
+		display:inline-block;
+		background-color:green;
+		animation:div_animated 5s 1;
+	}
+	@keyframes div_animated{
+		0%		{transform: rotate(0deg);left:0px;}
+		10%		{transform: rotate(20deg);left:0px;}
+		60%		{transform: rotate(360deg);left:500px;}
+		100%	{transform: rotate(-360deg);left:0px;}
+	}
+	&lt;div class="div_animated">动画示例&lt;/div>
+	
+2d和3d变换：
+	transform 			向元素应用 2D 或 3D 转换。
+	transform-origin 	允许你改变被转换元素的位置。
+	transform-style 	规定被嵌套元素如何在 3D 空间中显示。
+	perspective 		规定 3D 元素的透视效果。
+	perspective-origin 	规定 3D 元素的底部位置。
+	backface-visibility	定义元素在不面对屏幕时是否可见。
+	
+	用于2d变换的函数：
+		matrix(n,n,n,n,n,n) 	 使用六个值的矩阵
+		translate(x,y)	移动，沿着 X 和 Y 轴移动元素
+		translateX(n)	移动，沿着 X 轴移动元素
+		translateY(n)	移动，沿着 Y 轴移动元素
+		rotate(angle) 	旋转，在参数中规定角度
+		scale(x,y)		缩放，改变元素的宽度和高度
+		scaleX(n) 		缩放，改变元素的宽度
+		scaleY(n) 		缩放，改变元素的高度
+		skew(x-angle,y-angle) 	倾斜转换，沿着 X 和 Y 轴
+		skewX(angle) 			倾斜转换，沿着 X 轴
+		skewY(angle) 			倾斜转换，沿着 Y 轴
+	用于3d变换的函数：
+		matrix3d(n,n,n,n,n,n,n,n,n,n,n,n,n,n,n,n) 	使用 16 个值的 4x4 矩阵
+		translate3d(x,y,z) 		移动
+		translateX(x) 			移动，仅使用用于 X 轴的值
+		translateY(y) 			移动，仅使用用于 Y 轴的值
+		translateZ(z) 			移动，仅使用用于 Z 轴的值
+		rotate3d(x,y,z,angle) 	旋转
+		scale3d(x,y,z) 			缩放
+		scaleX(x) 				缩放，通过给定一个 X 轴的值
+		scaleY(y) 				缩放，通过给定一个 Y 轴的值
+		scaleZ(z) 				缩放，通过给定一个 Z 轴的值
+		rotateX(angle) 			旋转
+		rotateY(angle) 			旋转
+		rotateZ(angle) 			旋转
+		perspective(n) 			透视视图
+
+
+</div>
+<div t="其他">
+语法与规则
+	!important 提升指定样式条目的应用优先权。 
+	@charset 在外部样式表文件内使用。指定该样式表使用的字符编码。 
+	@import 指定导入的外部样式表及目标媒体。该规则必须在样式表头部最先声明 
+	@media 指定样式表规则用于指定的媒体类型和条件。 
+	@font-face 设置嵌入HTML文档的OpenType字体。 
+	@keyframes 指定动画名称和动画效果。 
+	@page 设置页面容器的版式，方向，边空等。 
+	注释 /*xxxxx*/
+	
+书写模式
+	direction 书写模式 检索或设置文本流的方向 
+	unicode-bidi 用于同一个页面里存在从不同方向读进的文本显示。与direction属性一起使用 
+	writing-mode 内容块固有的书写方向 
+
+打印
+	page	
+	page-break-before 	
+	page-break-after	
+	page-break-inside	 
+
+用户界面 
+	nav-index 导航顺序。 
+	nav-up 导航方向。 
+	nav-right 导航方向。 
+	nav-down 导航方向。 
+	nav-left 导航方向。 
+
+	text-overflow 是否使用一个省略标记（...）标示对象内文本的溢出 
+	cursor 光标形状。 
+	zoom 缩放比例。 
+	box-sizing 盒模型组成模式。 
+	resize 区域是否允许用户缩放，调节元素尺寸大小。 
+	ime-mode 是否允许用户激活输入中文，韩文，日文等的输入法（IME）状态。 
+	user-select 是否允许用户选中文本。 
+
+多列
+	columns  列数和每列的宽度。复合属性 
+	column-width  每列的宽度 
+	column-count  列数 
+	column-gap  列与列之间的间隙 
+	column-rule  列与列之间的边框。复合属性 
+	column-rule-width  列与列之间的边框厚度。 
+	column-rule-style  列与列之间的边框样式。 
+	column-rule-color 列与列之间的边框颜色。 
+	column-span  元素是否横跨所有列。 
+	column-fill  所有列的高度是否统一。 
+	column-break-before  之前是否断行。 
+	column-break-after  之后是否断行。 
+	column-break-inside  内部是否断行。 
+
+</div>
+<div t="结束">
+这是研究css的笔记，写出来就是为了整理出一个css的比较完整的轮廓。
+参考资料：
+	css 权威指南（第三版）
+	<a href="http://www.w3school.com.cn/css/css_reference.asp" target=_blank>w3cschool css 参考手册</a>
+	<a href="http://www.w3school.com.cn/css3/index.asp" target=_blank>w3cschool css3 参考手册</a>
+	
+
+创建时间：2014年1月17日
+作者：flysnowxg
+</div>
+</div>
+</div>
+
+</body>
+</html>
+
