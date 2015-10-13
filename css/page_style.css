@@ -1,5 +1,5 @@
 body {
-    font-family:"STKaiti", "华文楷体";
+    font-family:"STKaiti", "鍗庢枃妤蜂綋";
     font-size:20px;
     margin:5% 22%;
     width:60%;
@@ -32,7 +32,7 @@ li {
 }
 
 pre {
-    font-family:"STKaiti", "华文楷体";
+    font-family:"STXingkai";
 	white-space:pre-wrap; /* css3.0 */
 	white-space:-moz-pre-wrap; /* Firefox */
 	white-space:-pre-wrap; /* Opera 4-6 */
